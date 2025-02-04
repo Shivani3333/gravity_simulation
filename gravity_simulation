@@ -1,0 +1,89 @@
+import pygame
+import math
+import os
+
+pygame.init()
+
+WIDTH, HEIGHT = 800, 600
+win = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Gravitational Pull Simulation")
+
+PLANET_MASS = 1000  # Increased mass for stronger gravity
+OBJECT_MASS = 5
+G = 0.1  # Gravitational constant (adjust for simulation scale)
+FPS = 60
+PLANET_SIZE = 50
+OBJ_SIZE = 5
+
+# Use absolute paths to load images
+bg_path = os.path.join("C:/Users/coder/Downloads/Python-Tetris-Game-Pygame-main/Python-Tetris-Game-Pygame-main", "bg.png")
+planet_path = os.path.join("C:/Users/coder/Downloads/Python-Tetris-Game-Pygame-main/Python-Tetris-Game-Pygame-main", "moon.png")
+
+try:
+    BG = pygame.image.load(bg_path)
+    BG = pygame.transform.scale(BG, (WIDTH, HEIGHT))
+    print("Background image loaded successfully")
+except pygame.error as e:
+    print(f"Unable to load background image: {e}")
+
+try:
+    PLANET = pygame.image.load(planet_path)
+    PLANET = pygame.transform.scale(PLANET, (PLANET_SIZE * 2, PLANET_SIZE * 2))
+    print("Planet image loaded successfully")
+except pygame.error as e:
+    print(f"Unable to load planet image: {e}")
+
+# Colors
+R = (255, 0, 0)
+
+def main():
+    running = True
+    clock = pygame.time.Clock()
+
+    object_positions = []
+    object_velocities = []
+
+    while running:
+        clock.tick(FPS)
+        win.fill((0, 0, 0))  # Fill the window with black before drawing
+
+        mouse_pos = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                object_positions.append(list(mouse_pos))
+                object_velocities.append([0, 0])
+
+        if 'BG' in locals():
+            win.blit(BG, (0, 0))  # Draw background image if loaded successfully
+
+        for i in range(len(object_positions)):
+            obj_pos = object_positions[i]
+            obj_vel = object_velocities[i]
+
+            # Apply gravity from the planet at the center of the screen
+            dx = WIDTH / 2 - obj_pos[0]
+            dy = HEIGHT / 2 - obj_pos[1]
+            distance = math.sqrt(dx ** 2 + dy ** 2)
+            if distance != 0:
+                force = G * PLANET_MASS * OBJECT_MASS / distance ** 2
+                angle = math.atan2(dy, dx)
+                obj_vel[0] += math.cos(angle) * force / OBJECT_MASS
+                obj_vel[1] += math.sin(angle) * force / OBJECT_MASS
+
+            obj_pos[0] += obj_vel[0]
+            obj_pos[1] += obj_vel[1]
+
+            pygame.draw.circle(win, R, (int(obj_pos[0]), int(obj_pos[1])), OBJ_SIZE)
+
+        if 'PLANET' in locals():
+            win.blit(PLANET, (WIDTH // 2 - PLANET_SIZE, HEIGHT // 2 - PLANET_SIZE))  # Draw planet image if loaded successfully
+
+        pygame.display.update()  # Refresh the screen
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
