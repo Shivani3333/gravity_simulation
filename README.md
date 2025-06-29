@@ -1,4 +1,4 @@
-[gravitational_sim_readme.md](https://github.com/user-attachments/files/20966054/gravitational_sim_readme.md)# 🌌 Gravity Simulation
+🌌 Gravity Simulation
 
 ![Gravity Simulation](https://github.com/user-attachments/assets/f07096f6-f313-4561-974a-ee976f88b72b)
 
